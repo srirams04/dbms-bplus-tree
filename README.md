@@ -16,6 +16,11 @@ This project implements a custom database management system using B+ Trees for e
 - **BLOB Support**: Store and view binary objects like images
 - **Visualization**: Interactive visualization of B+ Tree structures
 - **Performance Analysis**: Compare B+ Tree performance with brute force approaches
+![image](https://github.com/user-attachments/assets/d6ffeef9-6423-493d-a251-a64f28d58f72)
+![image](https://github.com/user-attachments/assets/47928aa1-500b-4d05-bb2c-e005a85b5d09)
+![image](https://github.com/user-attachments/assets/99d0c7e3-9eb4-4811-8a9c-a1543f30c19e)
+
+
 
 ## System Architecture
 
@@ -53,7 +58,7 @@ The system consists of several key components:
 
 3. Install Graphviz (for visualization):
    - On macOS: `brew install graphviz`
-   - On Ubuntu: `sudo apt-get install graphviz`
+   - On Ubuntu: `sudo apt-get update && sudo apt-get install graphviz`
    - On Windows: Download from https://graphviz.org/download/
 
 4. Configure MySQL connection (optional):
