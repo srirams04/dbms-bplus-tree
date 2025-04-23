@@ -1,0 +1,289 @@
+{% extends 'base.html' %}
+
+{% block title %}Create New Table - B+ Tree DBMS{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Create New Table</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                <a href="{{ url_for('index') }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Table Definition</h5>
+                </div>
+                <div class="card-body">
+                    <form id="create-table-form" action="{{ url_for('create_table') }}" method="post">
+                        <div class="mb-3">
+                            <label for="table_name" class="form-label">Table Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="table_name" name="table_name" required
+                                   placeholder="Enter table name (e.g., customers, products, etc.)">
+                        </div>
+                        
+                        <div id="columns-container">
+                            <h5 class="mb-3">Columns</h5>
+                            <div class="column-entry row mb-3" data-index="0">
+                                <div class="col">
+                                    <input type="text" class="form-control column-name" 
+                                           name="column_name_0" placeholder="Column name" required>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="form-check form-check-inline mt-2">
+                                        <input class="form-check-input primary-key-radio" type="radio" 
+                                               name="primary_key" id="primary_key_0" value="" required>
+                                        <label class="form-check-label" for="primary_key_0">
+                                            Primary Key
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <button type="button" class="btn btn-danger btn-sm remove-column" disabled>
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <input type="hidden" id="column_count" name="column_count" value="1">
+                        
+                        <div class="mb-4">
+                            <button type="button" class="btn btn-outline-secondary" id="add-column">
+                                <i class="fas fa-plus"></i> Add Column
+                            </button>
+                        </div>
+                        
+                        <div class="pt-3 border-top">
+                            <button type="button" class="btn btn-primary me-2" id="preview-btn">
+                                <i class="fas fa-eye"></i> Preview Structure
+                            </button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Create Table
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Guidelines</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        <li>Table name must be unique</li>
+                        <li>At least one column is required</li>
+                        <li>Each column name must be unique</li>
+                        <li>A primary key column is required</li>
+                        <li>Primary key values must be unique within the table</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card" id="preview-card" style="display: none;">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Table Structure Preview</h5>
+                </div>
+                <div class="card-body">
+                    <div id="preview-content">
+                        <!-- Preview content will be displayed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="previewModalLabel">Table Structure Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modal-preview-content">
+                <!-- Preview content will be displayed here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="confirm-create">Confirm & Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let columnCount = 1;
+        const columnsContainer = document.getElementById('columns-container');
+        const columnCountInput = document.getElementById('column_count');
+        const addColumnBtn = document.getElementById('add-column');
+        const previewBtn = document.getElementById('preview-btn');
+        const confirmCreateBtn = document.getElementById('confirm-create');
+        const createTableForm = document.getElementById('create-table-form');
+        
+        // Add a new column input
+        addColumnBtn.addEventListener('click', function() {
+            const index = columnCount;
+            columnCount++;
+            
+            const columnEntry = document.createElement('div');
+            columnEntry.className = 'column-entry row mb-3';
+            columnEntry.dataset.index = index;
+            
+            columnEntry.innerHTML = `
+                <div class="col">
+                    <input type="text" class="form-control column-name" 
+                           name="column_name_${index}" placeholder="Column name" required>
+                </div>
+                <div class="col-auto">
+                    <div class="form-check form-check-inline mt-2">
+                        <input class="form-check-input primary-key-radio" type="radio" 
+                               name="primary_key" id="primary_key_${index}" value="">
+                        <label class="form-check-label" for="primary_key_${index}">
+                            Primary Key
+                        </label>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-danger btn-sm remove-column">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            
+            columnsContainer.appendChild(columnEntry);
+            columnCountInput.value = columnCount;
+            
+            // Enable all remove buttons if we have more than one column
+            if (columnCount > 1) {
+                enableRemoveButtons();
+            }
+            
+            // Add event listener to the new column's name input
+            const newColumnNameInput = columnEntry.querySelector('.column-name');
+            newColumnNameInput.addEventListener('input', updatePrimaryKeyValues);
+            
+            // Add event listener to remove button
+            const removeBtn = columnEntry.querySelector('.remove-column');
+            removeBtn.addEventListener('click', function() {
+                columnsContainer.removeChild(columnEntry);
+                columnCount--;
+                columnCountInput.value = columnCount;
+                renumberColumns();
+                
+                // Disable remove buttons if only one column remains
+                if (columnCount <= 1) {
+                    disableRemoveButtons();
+                }
+            });
+            
+            updatePrimaryKeyValues();
+        });
+        
+        // Function to update primary key radio values based on column names
+        function updatePrimaryKeyValues() {
+            const columnInputs = document.querySelectorAll('.column-name');
+            const primaryKeyRadios = document.querySelectorAll('.primary-key-radio');
+            
+            columnInputs.forEach((input, index) => {
+                const value = input.value.trim();
+                primaryKeyRadios[index].value = value;
+            });
+        }
+        
+        // Add event listeners to column name inputs
+        document.querySelectorAll('.column-name').forEach(input => {
+            input.addEventListener('input', updatePrimaryKeyValues);
+        });
+        
+        // Renumber columns after removal
+        function renumberColumns() {
+            const columnEntries = document.querySelectorAll('.column-entry');
+            columnEntries.forEach((entry, index) => {
+                entry.dataset.index = index;
+                
+                const nameInput = entry.querySelector('.column-name');
+                nameInput.name = `column_name_${index}`;
+                
+                const radioInput = entry.querySelector('.primary-key-radio');
+                radioInput.id = `primary_key_${index}`;
+                
+                const radioLabel = entry.querySelector('.form-check-label');
+                radioLabel.setAttribute('for', `primary_key_${index}`);
+            });
+        }
+        
+        // Enable all remove column buttons
+        function enableRemoveButtons() {
+            document.querySelectorAll('.remove-column').forEach(btn => {
+                btn.disabled = false;
+            });
+        }
+        
+        // Disable all remove column buttons
+        function disableRemoveButtons() {
+            document.querySelectorAll('.remove-column').forEach(btn => {
+                btn.disabled = true;
+            });
+        }
+        
+        // Preview table structure
+        previewBtn.addEventListener('click', function() {
+            const formData = new FormData(createTableForm);
+            
+            fetch('{{ url_for("create_table_preview") }}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const previewHTML = `
+                        <h6>Table Name: <strong>${data.table_name}</strong></h6>
+                        <h6>Primary Key: <strong>${data.primary_key}</strong></h6>
+                        <h6>Columns:</h6>
+                        <ul>
+                            ${data.columns.map(col => `<li>${col}${col === data.primary_key ? ' (Primary Key)' : ''}</li>`).join('')}
+                        </ul>
+                    `;
+                    
+                    document.getElementById('preview-content').innerHTML = previewHTML;
+                    document.getElementById('modal-preview-content').innerHTML = previewHTML;
+                    document.getElementById('preview-card').style.display = 'block';
+                    
+                    // Show the modal
+                    new bootstrap.Modal(document.getElementById('previewModal')).show();
+                } else {
+                    alert('Error generating preview: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while previewing the table structure.');
+            });
+        });
+        
+        // Confirm creation
+        confirmCreateBtn.addEventListener('click', function() {
+            createTableForm.submit();
+        });
+        
+        // Initialize primary key values
+        updatePrimaryKeyValues();
+    });
+</script>
+{% endblock %}

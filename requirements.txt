@@ -1,0 +1,11 @@
+Flask
+mysql-connector-python
+graphviz
+matplotlib
+numpy
+Pillow
+Werkzeug
+Jinja2
+itsdangerous
+click
+MarkupSafe

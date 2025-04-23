@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}Import MySQL Tables - B+ Tree DBMS{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Import Tables from MySQL</h1>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Available MySQL Tables</h5>
+                </div>
+                <div class="card-body">
+                    {% if mysql_tables %}
+                        <form action="{{ url_for('import_table') }}" method="post">
+                            <div class="mb-3">
+                                <label for="table_name" class="form-label">Select a table to import:</label>
+                                <select name="table_name" id="table_name" class="form-select" required>
+                                    <option value="">-- Select a table --</option>
+                                    {% for table_name in mysql_tables %}
+                                        <option value="{{ table_name }}">{{ table_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-download me-2"></i> Import Selected Table
+                            </button>
+                        </form>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            No tables found in MySQL database. Please check your connection settings.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">MySQL Connection Details</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">Host</dt>
+                        <dd class="col-sm-9">127.0.0.1</dd>
+                        
+                        <dt class="col-sm-3">Port</dt>
+                        <dd class="col-sm-9">3306</dd>
+                        
+                        <dt class="col-sm-3">Database</dt>
+                        <dd class="col-sm-9">Dispensary</dd>
+                        
+                        <dt class="col-sm-3">User</dt>
+                        <dd class="col-sm-9">root</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Currently Imported Tables</h5>
+                </div>
+                <div class="card-body">
+                    {% if imported_tables %}
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Table Name</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for table_name in imported_tables %}
+                                        <tr>
+                                            <td>{{ table_name }}</td>
+                                            <td class="action-buttons">
+                                                <a href="{{ url_for('view_table', table_name=table_name) }}" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-table"></i> View
+                                                </a>
+                                                <form action="{{ url_for('delete_table', table_name=table_name) }}" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this table?');">
+                                                    <button type="submit" class="btn btn-sm btn-danger">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            No tables have been imported yet. Use the form on the left to import tables from MySQL.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Import Information</h5>
+                </div>
+                <div class="card-body">
+                    <p>When you import a table from MySQL:</p>
+                    <ul>
+                        <li>The table structure will be preserved, including column names and primary key</li>
+                        <li>All data will be imported into the B+ Tree database</li>
+                        <li>An index will automatically be created on the primary key column</li>
+                        <li>BLOB data (like images) will be imported and can be viewed in the UI</li>
+                        <li>Once imported, the table will be stored in the B+ Tree database and can be accessed independently of the MySQL connection</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

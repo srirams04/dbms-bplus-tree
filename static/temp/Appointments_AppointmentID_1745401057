@@ -1,0 +1,24 @@
+// B+ Tree Visualization
+digraph {
+	graph [nodesep=0.5 rankdir=TB ranksep=0.5 splines=true]
+	node [fontname=Arial shape=plaintext]
+	node_2508035881568 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD COLSPAN="2" BGCOLOR="gold">ROOT NODE</TD></TR><TR><TD PORT="p0">&nbsp;</TD><TD>7</TD><TD PORT="p1">&nbsp;</TD></TR></TABLE>>]
+	node_2508035882528 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD COLSPAN="3" BGCOLOR="lightcoral">INTERNAL NODE</TD></TR><TR><TD PORT="p0">&nbsp;</TD><TD>3</TD><TD PORT="p1">&nbsp;</TD><TD>5</TD><TD PORT="p2">&nbsp;</TD></TR></TABLE>>]
+	node_2508035882720 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD COLSPAN="2" BGCOLOR="lightblue">LEAF NODE</TD></TR><TR><TD>1</TD><TD>2</TD></TR><TR><TD>0</TD><TD>1</TD></TR></TABLE>>]
+	node_2508035882528:p0 -> node_2508035882720
+	node_2508035881808 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD COLSPAN="2" BGCOLOR="lightblue">LEAF NODE</TD></TR><TR><TD>3</TD><TD>4</TD></TR><TR><TD>2</TD><TD>3</TD></TR></TABLE>>]
+	node_2508035882528:p1 -> node_2508035881808
+	node_2508035882576 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD COLSPAN="2" BGCOLOR="lightblue">LEAF NODE</TD></TR><TR><TD>5</TD><TD>6</TD></TR><TR><TD>4</TD><TD>5</TD></TR></TABLE>>]
+	node_2508035882528:p2 -> node_2508035882576
+	node_2508035881568:p0 -> node_2508035882528
+	node_2508035882864 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD COLSPAN="2" BGCOLOR="lightcoral">INTERNAL NODE</TD></TR><TR><TD PORT="p0">&nbsp;</TD><TD>9</TD><TD PORT="p1">&nbsp;</TD></TR></TABLE>>]
+	node_2508035882336 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD COLSPAN="2" BGCOLOR="lightblue">LEAF NODE</TD></TR><TR><TD>7</TD><TD>8</TD></TR><TR><TD>6</TD><TD>7</TD></TR></TABLE>>]
+	node_2508035882864:p0 -> node_2508035882336
+	node_2508035882960 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD COLSPAN="2" BGCOLOR="lightblue">LEAF NODE</TD></TR><TR><TD>9</TD><TD>10</TD></TR><TR><TD>8</TD><TD>9</TD></TR></TABLE>>]
+	node_2508035882864:p1 -> node_2508035882960
+	node_2508035881568:p1 -> node_2508035882864
+	node_2508035882720 -> node_2508035881808 [color=blue constraint=false style=dashed]
+	node_2508035881808 -> node_2508035882576 [color=blue constraint=false style=dashed]
+	node_2508035882576 -> node_2508035882336 [color=blue constraint=false style=dashed]
+	node_2508035882336 -> node_2508035882960 [color=blue constraint=false style=dashed]
+}

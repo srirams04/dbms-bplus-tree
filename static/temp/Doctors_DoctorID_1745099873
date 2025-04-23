@@ -1,0 +1,10 @@
+// B+ Tree Visualization
+digraph {
+	node [fontname=Arial shape=record]
+	4374039504 [label="{ 3 }" fillcolor=gold style=filled]
+	4374039888 [label="{ 1:0 | 2:1 }" fillcolor=lightblue style=filled]
+	4374039504 -> 4374039888
+	4374040208 [label="{ 3:2 | 4:3 | 5:4 }" fillcolor=lightblue style=filled]
+	4374039504 -> 4374040208
+	4374039888 -> 4374040208 [color=blue constraint=false style=dashed]
+}

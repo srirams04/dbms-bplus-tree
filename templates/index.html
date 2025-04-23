@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - B+ Tree DBMS{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">B+ Tree Database Management System</h1>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Imported Tables</h5>
+                </div>
+                <div class="card-body">
+                    {% if tables %}
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Table Name</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for table_name in tables %}
+                                        <tr>
+                                            <td>{{ table_name }}</td>
+                                            <td class="action-buttons">
+                                                <a href="{{ url_for('view_table', table_name=table_name) }}" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-table"></i> View
+                                                </a>
+                                                <form action="{{ url_for('delete_table', table_name=table_name) }}" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this table?');">
+                                                    <button type="submit" class="btn btn-sm btn-danger">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            No tables have been imported yet. Go to <a href="{{ url_for('import_mysql') }}">Import from MySQL</a> to import tables.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">About B+ Tree Database</h5>
+                </div>
+                <div class="card-body">
+                    <p>This application provides a user interface for a B+ Tree-based Database Management System.</p>
+                    <h6>Key Features:</h6>
+                    <ul>
+                        <li>Import tables from MySQL database</li>
+                        <li>Efficient querying with B+ Tree indices</li>
+                        <li>Create indices on any column for faster searches</li>
+                        <li>Visualize B+ Tree structures</li>
+                        <li>Perform standard CRUD operations</li>
+                        <li>View BLOB data such as images</li>
+                    </ul>
+                    <p>B+ Trees provide logarithmic time complexity for search, insert, and delete operations, making them ideal for database index implementations.</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Get Started</h5>
+                </div>
+                <div class="card-body">
+                    <p>To get started with the B+ Tree DBMS:</p>
+                    <ol>
+                        <li>Import tables from your MySQL database using the <a href="{{ url_for('import_mysql') }}">Import from MySQL</a> page</li>
+                        <li>View and interact with your tables</li>
+                        <li>Create indices on columns to optimize queries</li>
+                        <li>Use the search functionality for exact or range queries</li>
+                        <li>Visualize the B+ Tree indices to understand their structure</li>
+                    </ol>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('import_mysql') }}" class="btn btn-primary">
+                            <i class="fas fa-database me-2"></i> Import Tables from MySQL
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

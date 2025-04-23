@@ -1,0 +1,10 @@
+// Simple B+ Tree
+digraph {
+	graph [rankdir=LR]
+	node [shape=box]
+	simple_1609337480576 [label=" Root: 3" fillcolor=gold style=filled]
+	simple_1609337480688 [label=".0 Leaf: 1 | 2" fillcolor=lightblue style=filled]
+	simple_1609337480576 -> simple_1609337480688
+	simple_1609337480800 [label=".1 Leaf: 3 | 4 | 5" fillcolor=lightblue style=filled]
+	simple_1609337480576 -> simple_1609337480800
+}

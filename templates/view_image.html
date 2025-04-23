@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}View Image - {{ column }} - B+ Tree DBMS{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Image Viewer: {{ table_name }}.{{ column }}</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                <a href="{{ url_for('view_table', table_name=table_name) }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Table
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">{{ record_title }}</h5>
+                </div>
+                <div class="card-body text-center">
+                    <img src="{{ url_for('view_blob', table_name=table_name, row=row, column=column) }}" 
+                         alt="Image from {{ table_name }}" 
+                         class="img-fluid rounded" 
+                         style="max-height: 500px;">
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Record Details</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <tbody>
+                            {% for field, value in record_data.items() %}
+                            <tr>
+                                <th>{{ field }}</th>
+                                <td>
+                                    {% if value == "BLOB DATA" %}
+                                    <span class="badge bg-info"><i class="fas fa-image me-1"></i> Current Image</span>
+                                    {% else %}
+                                    {{ value }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        {% if prev_row is not none %}
+                        <a href="{{ url_for('view_image', table_name=table_name, row=prev_row, column=column) }}" 
+                           class="btn btn-sm btn-primary">
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </a>
+                        {% else %}
+                        <button class="btn btn-sm btn-secondary" disabled>
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        {% endif %}
+                        
+                        {% if next_row is not none %}
+                        <a href="{{ url_for('view_image', table_name=table_name, row=next_row, column=column) }}" 
+                           class="btn btn-sm btn-primary">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </a>
+                        {% else %}
+                        <button class="btn btn-sm btn-secondary" disabled>
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('update_record', table_name=table_name, primary_key_value=pk_value) }}" 
+                           class="btn btn-warning">
+                            <i class="fas fa-edit me-2"></i> Edit Record
+                        </a>
+                        <button type="button" class="btn btn-info" 
+                                onclick="window.open('{{ url_for('view_blob', table_name=table_name, row=row, column=column) }}', '_blank')">
+                            <i class="fas fa-image me-2"></i> Open Full Image
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if image_count > 1 %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">All {{ image_count }} Images</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+                        {% for i in range(image_count) %}
+                        <div class="col">
+                            <div class="card h-100 {% if i == row %}border border-3 border-primary{% endif %}">
+                                <a href="{{ url_for('view_image', table_name=table_name, row=i, column=column) }}" class="text-decoration-none">
+                                    <img src="{{ url_for('view_blob', table_name=table_name, row=i, column=column) }}" 
+                                         class="card-img-top" alt="Thumbnail"
+                                         style="height: 180px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ titles[i] }}</h5>
+                                        <p class="card-text text-muted">
+                                            Record #{{ i+1 }} of {{ image_count }}
+                                        </p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

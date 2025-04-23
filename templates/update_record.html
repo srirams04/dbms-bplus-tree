@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Record - {{ table_name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Update Record</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                <a href="{{ url_for('view_table', table_name=table_name) }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Table
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Update Record in {{ table_name }}</h5>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('update_record', table_name=table_name, primary_key_value=primary_key_value) }}" method="post" enctype="multipart/form-data">
+                {% for i in range(columns|length) %}
+                    <div class="mb-3">
+                        <label for="{{ columns[i] }}" class="form-label">{{ columns[i] }}</label>
+                        
+                        {% if columns[i] == primary_key %}
+                            <input type="text" class="form-control" id="{{ columns[i] }}" name="{{ columns[i] }}" value="{{ record[i] }}" readonly>
+                            <div class="form-text">Primary key cannot be changed.</div>
+                            
+                        {% elif columns[i] in blob_fields %}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <!-- Display current image if it's a BLOB -->
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Current Image</h6>
+                                        </div>
+                                        <div class="card-body text-center">
+                                            <img src="{{ url_for('view_blob', table_name=table_name, row=0, column=columns[i]) }}?{{ range(1000, 9999) | random }}" 
+                                                 class="img-fluid" alt="Current image" 
+                                                 style="max-height: 200px;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <!-- File upload control -->
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Upload New Image</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <input type="hidden" name="{{ columns[i] }}" value="{{ record[i] }}">
+                                            <input type="file" class="form-control" id="file_{{ columns[i] }}" name="file_{{ columns[i] }}" accept="image/*">
+                                            <div class="form-text">Select a new image file to replace the current one. Leave empty to keep the current image.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        {% else %}
+                            <input type="text" class="form-control" id="{{ columns[i] }}" name="{{ columns[i] }}" value="{{ record[i] }}">
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i> Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add preview functionality for image uploads
+    document.querySelectorAll('input[type="file"]').forEach(function(fileInput) {
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                const fieldName = this.name.replace('file_', '');
+                const previewImg = this.closest('.col-md-6').previousElementSibling.querySelector('img');
+                
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

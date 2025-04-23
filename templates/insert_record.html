@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Insert Record - {{ table_name }} - B+ Tree DBMS{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Insert Record: {{ table_name }}</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                <a href="{{ url_for('view_table', table_name=table_name) }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Table
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">New Record</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('insert_record', table_name=table_name) }}" method="post" enctype="multipart/form-data">
+                        {% for column in columns %}
+                            <div class="mb-3">
+                                <label for="{{ column }}" class="form-label">{{ column }}</label>
+                                
+                                {% if column.lower() == 'image' or column.lower().endswith('image') or column.lower().endswith('photo') or column.lower().endswith('picture') %}
+                                    <!-- Image upload field -->
+                                    <input type="file" class="form-control" id="file_{{ column }}" name="file_{{ column }}" accept="image/*">
+                                    <div class="form-text">Upload an image file</div>
+                                    
+                                    <!-- Preview area -->
+                                    <div class="mt-2">
+                                        <div class="card" id="preview_{{ column }}" style="display: none;">
+                                            <div class="card-header">
+                                                <h6 class="card-title mb-0">Image Preview</h6>
+                                            </div>
+                                            <div class="card-body text-center">
+                                                <img id="preview_img_{{ column }}" class="img-fluid" style="max-height: 200px;" alt="Preview">
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <input type="text" class="form-control" id="{{ column }}" name="{{ column }}" required>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i> Insert Record
+                            </button>
+                            <a href="{{ url_for('view_table', table_name=table_name) }}" class="btn btn-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">B+ Tree Insertion</h5>
+                </div>
+                <div class="card-body">
+                    <p>When you insert a record into a B+ Tree-indexed table:</p>
+                    <ol>
+                        <li>The record is added to the table's data structure</li>
+                        <li>For each index, the key value is inserted into the B+ Tree</li>
+                        <li>If a node becomes full during insertion, it splits and the tree rebalances</li>
+                        <li>All operations maintain O(log n) time complexity</li>
+                    </ol>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Primary key values must be unique. Duplicate values will be rejected.
+                    </div>
+                    
+                    <p>Fields marked with <span class="text-danger">*</span> are required.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add preview functionality for image uploads
+    document.querySelectorAll('input[type="file"]').forEach(function(fileInput) {
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                const fieldName = this.name.replace('file_', '');
+                const previewCard = document.getElementById('preview_' + fieldName);
+                const previewImg = document.getElementById('preview_img_' + fieldName);
+                
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    previewCard.style.display = 'block';
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
